@@ -3,8 +3,14 @@
   "name": "ab-stream-background",
   "builds": [
     {
-      "src": "next.config.js",
+      "src": "background/next.config.js",
       "use": "@now/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/background/$1"
     }
   ]
 }

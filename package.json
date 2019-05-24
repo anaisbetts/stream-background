@@ -1,0 +1,26 @@
+{
+  "name": "stream-background",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/index.ts",
+  "dependencies": {
+    "@zeit/next-typescript": "^1.1.1",
+    "next": "^8.1.0",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "typescript": "^3.4.5"
+  },
+  "devDependencies": {
+    "@types/next": "^8.0.5",
+    "@types/react": "^16.8.18",
+    "@types/styled-jsx": "^2.2.8",
+    "tslint": "^5.16.0"
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "author": "Anaïs Betts",
+  "license": "MIT"
+}

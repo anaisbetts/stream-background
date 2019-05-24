@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-const SIDEBAR_WIDTH = 256;
+const SIDEBAR_WIDTH = 320;
 const FOOTER_HEIGHT = 64;
 const BROADCAST_WIDTH = 1920;
 const BROADCAST_HEIGHT = 1080;
@@ -15,7 +15,8 @@ export default () => {
         </main>
 
         <aside>
-          <h1>Sidebar</h1>
+          <iframe src='https://www.twitch.tv/embed/shroud/chat' height='100%' width='100%'>
+          </iframe>
         </aside>
 
         <footer>

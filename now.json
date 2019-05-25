@@ -5,9 +5,17 @@
     {
       "src": "background/next.config.js",
       "use": "@now/next"
+    },
+    {
+      "src": "robot/**/*.ts",
+      "use": "@now/node"
     }
   ],
   "routes": [
+    {
+      "src": "/(api|api.*)",
+      "dest": "/robot/src/index.ts"
+    },
     {
       "src": "/(.*)",
       "dest": "/background/$1"

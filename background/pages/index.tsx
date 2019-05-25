@@ -37,7 +37,6 @@ export default () => {
 
       footer {
         grid-area: footer;
-        border: 1px solid blue;
 
         display: flex;
         align-items: center;
@@ -45,6 +44,7 @@ export default () => {
 
       main {
         grid-area: main;
+        background: magenta;
       }
 
       .container {

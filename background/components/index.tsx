@@ -139,10 +139,10 @@ export default () => {
         </aside>
 
         <footer>
-          <div style={{ marginLeft: 24 }} />
+          <div style={{ marginLeft: 16 }} />
+          <img src='/static/github.svg' style={{ marginTop: 4.5 }} />
           <img src='/static/twitch.svg' style={{ marginTop: 4.5 }} />
           <img src='/static/twitter.svg' style={{ marginTop: 4.5 }} />
-          <img src='/static/github.svg' style={{ marginTop: 4.5 }} />
           <h2 style={{ marginLeft: 8 }}>anaisbetts</h2>
         </footer>
       </div>

@@ -7,7 +7,7 @@ import { db } from './firebase';
 import { useQuery } from './when-firebase';
 
 const SIDEBAR_WIDTH = 320;
-const FOOTER_HEIGHT = 64;
+const FOOTER_HEIGHT = 40;
 const BROADCAST_WIDTH = 1920;
 const BROADCAST_HEIGHT = 1080;
 
@@ -33,16 +33,35 @@ function getColorForUser(user: string) {
   return ret;
 }
 
-const stylesheet = (<style jsx global>{`
-  body,html,main,aside,footer,h1,h2 {
-    margin: 0;
-    padding: 0;
-  }
-
+const sidebarStylesheet = (<style jsx global>{`
   aside {
     grid-area: aside;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
   }
 
+  aside h2 {
+    margin-left: 8px;
+    margin-top: 8px;
+    font-family: Pacifico;
+  }
+
+  .chat {
+    margin-left: 16px;
+    font-family: Convection, Arial;
+    word-wrap: break-word;
+    flex: 1 1 auto;
+  }
+
+  .chat ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+`}</style>);
+
+const footerStylesheet = (<style jsx global>{`
   footer {
     grid-area: footer;
 
@@ -54,7 +73,15 @@ const stylesheet = (<style jsx global>{`
 
   footer img {
     margin: 0px 8px 0 8px;
-    width: 32px;
+    width: 24px;
+  }
+`}</style>);
+
+const stylesheet = (<style jsx global>{`
+  body,html,main,aside,footer,h1,h2 {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
   }
 
   main {
@@ -76,18 +103,6 @@ const stylesheet = (<style jsx global>{`
       "main aside"
       "footer aside";
   }
-
-  .chat {
-    margin: 16px;
-    font-family: Convection, Arial;
-    word-wrap: break-word;
-  }
-
-  .chat ul {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-  }
 `}</style>);
 
 export default () => {
@@ -108,6 +123,8 @@ export default () => {
       </Head>
 
       {stylesheet}
+      {footerStylesheet}
+      {sidebarStylesheet}
 
       <div className='container'>
         <main>
@@ -115,6 +132,7 @@ export default () => {
         </main>
 
         <aside>
+          <h2>Chat</h2>
           <div className='chat'>
             <ul>{messages}</ul>
           </div>

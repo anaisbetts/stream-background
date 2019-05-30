@@ -28,7 +28,7 @@ function connectObservable(opts: Options) {
 function messageObservable(client: Client): Observable<MessageWithClient> {
   return new Observable(subj => {
     const handler = (channel: string, userState: ChatUserstate, message: string) => {
-      subj.next({client, channel, userState, message});
+      subj.next({ client, channel, userState, message });
     };
 
     client.on('message', handler);
@@ -48,15 +48,18 @@ async function main() {
     baz: 'bamf',
   });
 
-  const conn = connectObservable({
+  const settings = {
     identity: {
       username: process.env.TWITCH_USER,
-      password: process.env.TWITCH_TOKEN,
+      password: process.env.TWITCH_OAUTH,
     },
     channels: [
       process.env.TWITCH_CHANNEL!,
     ],
-  }).pipe(retry(), publish(), refCount());
+  };
+
+  console.log(`Connection info:\n${JSON.stringify(settings, null, 2)}`);
+  const conn = connectObservable(settings).pipe(retry(), publish(), refCount());
 
   const listen = conn.pipe(
     flatMap(cli => messageObservable(cli)),

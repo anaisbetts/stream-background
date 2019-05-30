@@ -4,15 +4,10 @@
   "builds": [
     {
       "src": "background/next.config.js",
-      "use": "@now/next"
-    },
-    {
-      "src": "api/**/*.ts",
-      "use": "@now/node"
-    },
-    {
-      "src": "static/*.png",
-      "use": "@now/optipng"
+      "use": "@now/next",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
     },
     {
       "src": "static/*",
@@ -20,10 +15,6 @@
     }
   ],
   "routes": [
-    {
-      "src": "/(api|api.*)",
-      "dest": "/api/src/index.ts"
-    },
     {
       "src": "/static/(.*)",
       "dest": "/static/$1"

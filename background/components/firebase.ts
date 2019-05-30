@@ -9,4 +9,4 @@ try {
 } catch (_e) { }
 
 export const db = firebase.firestore!();
-db.settings({ timestampsInSnapshots: true });
+db.settings({});

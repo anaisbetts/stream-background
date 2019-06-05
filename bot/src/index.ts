@@ -1,10 +1,13 @@
 import { Observable } from 'rxjs';
 import { flatMap, publish, refCount, retry } from 'rxjs/operators';
-import { firebaseBotPassword, firebaseBotUser, firebaseConfig } from './firebase-config';
 
 import * as firebase from 'firebase';
-
 import { ChatUserstate, Client, Options } from 'tmi.js';
+
+import {
+  defaultTwitchChannel, defaultTwitchUsername, firebaseBotPassword,
+  firebaseBotUser, firebaseConfig,
+} from './firebase-config';
 
 interface MessageWithClient {
   client: Client;
@@ -48,17 +51,20 @@ async function main() {
     baz: 'bamf',
   });
 
+  if (!process.env.TWITCH_OAUTH) {
+    throw new Error('TWITCH_OAUTH environment variable not set! This will go poorly');
+  }
+
   const settings = {
     identity: {
-      username: process.env.TWITCH_USER,
+      username: process.env.TWITCH_USER || defaultTwitchUsername,
       password: process.env.TWITCH_OAUTH,
     },
     channels: [
-      process.env.TWITCH_CHANNEL!,
+      process.env.TWITCH_CHANNEL || defaultTwitchChannel,
     ],
   };
 
-  console.log(`Connection info:\n${JSON.stringify(settings, null, 2)}`);
   const conn = connectObservable(settings).pipe(retry(), publish(), refCount());
 
   const listen = conn.pipe(

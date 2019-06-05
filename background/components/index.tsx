@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import Head from 'next/head';
 
-import { hslToHex } from './color-utils';
+import * as Color from 'color';
 import { db } from './firebase';
 import { useQuery } from './when-firebase';
 
@@ -15,13 +15,18 @@ const usernameToColorMap: Map<string, string> = new Map();
 let nextHue = 0.0;
 let toAdd = 1.0;
 
+const BACKGROUND_COLOR = new Color('#4164cd');
+const TEXT_ON_BACKGROUND_COLOR = new Color('#fff');
+const ACCENT_COLOR = new Color('#88619f');
+const TEXT_ON_ACCENT_COLOR = new Color('#fff');
+
 function getColorForUser(user: string) {
   if (usernameToColorMap.has(user)) {
     return usernameToColorMap.get(user);
   }
 
-  const ret = hslToHex(nextHue, 0.5, 0.5);
-  usernameToColorMap.set(user, ret);
+  const ret = Color([nextHue * 360.0, 66, 50], 'hsl');
+  usernameToColorMap.set(user, ret.hex());
 
   if (nextHue + toAdd > 1.0) {
     toAdd /= 2;
@@ -30,7 +35,7 @@ function getColorForUser(user: string) {
     nextHue += toAdd;
   }
 
-  return ret;
+  return ret.hex();
 }
 
 const sidebarStylesheet = (<style jsx global>{`
@@ -39,19 +44,30 @@ const sidebarStylesheet = (<style jsx global>{`
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    margin-bottom: ${FOOTER_HEIGHT}px;
   }
 
   aside h2 {
     margin-left: 8px;
     margin-top: 8px;
     font-family: Pacifico;
+    z-index: 30;
   }
 
   .chat {
-    margin-left: 16px;
+    margin-left: 8px;
+    margin-right: 8px;
+    margin-top: 4px;
+    margin-bottom: 4px;
     font-family: Convection, Arial;
     word-wrap: break-word;
     flex: 1 1 auto;
+
+    background-color: ${BACKGROUND_COLOR.darken(0.2).desaturate(0.3)};
+    border-radius: 6px;
+    padding: 8px;
+    filter: drop-shadow(4px 2px 4px #222);
+    z-index: 10;
   }
 
   .chat ul {
@@ -74,6 +90,7 @@ const footerStylesheet = (<style jsx global>{`
   footer img {
     margin: 0px 8px 0 8px;
     width: 24px;
+    filter: drop-shadow(2px 1px 2px #444);
   }
 `}</style>);
 
@@ -87,14 +104,18 @@ const stylesheet = (<style jsx global>{`
   main {
     grid-area: main;
     background: magenta;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .container {
     max-width: ${BROADCAST_WIDTH}px;
     max-height: ${BROADCAST_HEIGHT}px;
     height: ${BROADCAST_HEIGHT}px;
-    background: #eee;
-    color: black;
+
+    background: ${BACKGROUND_COLOR};
+    color: ${TEXT_ON_BACKGROUND_COLOR};
 
     display: grid;
     grid-template-columns: auto ${SIDEBAR_WIDTH}px;
@@ -103,11 +124,15 @@ const stylesheet = (<style jsx global>{`
       "main aside"
       "footer aside";
   }
+
+  .container h2 {
+    filter: drop-shadow(4px 2px 4px #444);
+  }
 `}</style>);
 
 export default () => {
   const theWidth = ('window' in global) ? window.outerWidth : 0;
-  const query = useQuery(() => db.collection('messages').orderBy('timestamp', 'desc').limit(25));
+  const query = useQuery(() => db.collection('messages').orderBy('timestamp', 'desc').limit(20));
 
   const messages = query ? query.docs.map(x => {
     const data: any = x.data();
@@ -128,7 +153,7 @@ export default () => {
 
       <div className='container'>
         <main>
-          <h1>Main - {theWidth}</h1>
+          <h1>If you're seeing this then something bad happened!- {theWidth}</h1>
         </main>
 
         <aside>
@@ -140,7 +165,7 @@ export default () => {
 
         <footer>
           <div style={{ marginLeft: 16 }} />
-          <img src='/static/github.svg' style={{ marginTop: 4.5 }} />
+          <img src='/static/github.png' style={{ marginTop: 4.5 }} />
           <img src='/static/twitch.svg' style={{ marginTop: 4.5 }} />
           <img src='/static/twitter.svg' style={{ marginTop: 4.5 }} />
           <h2 style={{ marginLeft: 8 }}>anaisbetts</h2>

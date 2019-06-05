@@ -4,6 +4,9 @@
   "author": "Anaïs Betts",
   "license": "AGPL 3.0",
   "main": "src/index.ts",
+  "scripts": {
+    "start": "ts-node ./src/index.ts"
+  },
   "dependencies": {
     "axios": "^0.18.0",
     "firebase": "^6.0.4",

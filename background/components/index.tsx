@@ -7,7 +7,7 @@ import { db } from './firebase';
 import { useQuery } from './when-firebase';
 
 const SIDEBAR_WIDTH = 320;
-const FOOTER_HEIGHT = 40;
+const FOOTER_HEIGHT = 48;
 const BROADCAST_WIDTH = 1920;
 const BROADCAST_HEIGHT = 1080;
 
@@ -63,7 +63,7 @@ const sidebarStylesheet = (<style jsx global>{`
     word-wrap: break-word;
     flex: 1 1 auto;
 
-    background-color: ${BACKGROUND_COLOR.darken(0.2).desaturate(0.3)};
+    background-color: ${BACKGROUND_COLOR.darken(0.2).desaturate(0.2)};
     border-radius: 6px;
     padding: 8px;
     filter: drop-shadow(4px 2px 4px #222);

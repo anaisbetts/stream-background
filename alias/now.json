@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "name": "ab-alias-site",
+  "alias": [
+    "anais.dev"
+  ],
+  "builds": [
+    {
+      "src": "src/index.ts",
+      "use": "@now/node@canary",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/src/$1"
+    }
+  ]
+}

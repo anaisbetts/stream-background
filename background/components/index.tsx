@@ -7,7 +7,7 @@ import { db } from './firebase';
 import { useQuery } from './when-firebase';
 
 const SIDEBAR_WIDTH = 320;
-const FOOTER_HEIGHT = 48;
+const FOOTER_HEIGHT = 54;
 const BROADCAST_WIDTH = 1920;
 const BROADCAST_HEIGHT = 1080;
 
@@ -15,7 +15,7 @@ const usernameToColorMap: Map<string, string> = new Map();
 let nextHue = 0.0;
 let toAdd = 1.0;
 
-const BACKGROUND_COLOR = new Color('#4164cd');
+const BACKGROUND_COLOR = new Color('#4164cd').desaturate(0.2);
 const TEXT_ON_BACKGROUND_COLOR = new Color('#fff');
 const ACCENT_COLOR = new Color('#88619f');
 const TEXT_ON_ACCENT_COLOR = new Color('#fff');
@@ -37,6 +37,12 @@ function getColorForUser(user: string) {
 
   return ret.hex();
 }
+
+function randomElement<T>(items: T[]) {
+  return items[Math.floor((Math.random() * items.length))];
+}
+
+const backgrounds = ['endless-clouds.svg', 'topography.svg'];
 
 const sidebarStylesheet = (<style jsx global>{`
   aside {
@@ -63,7 +69,7 @@ const sidebarStylesheet = (<style jsx global>{`
     word-wrap: break-word;
     flex: 1 1 auto;
 
-    background-color: ${BACKGROUND_COLOR.darken(0.2).desaturate(0.2)};
+    background-color: ${BACKGROUND_COLOR.darken(-0.2).alpha(0.5)};
     border-radius: 6px;
     padding: 8px;
     filter: drop-shadow(4px 2px 4px #222);
@@ -87,18 +93,40 @@ const footerStylesheet = (<style jsx global>{`
     font-family: 'Pacifico';
   }
 
+  footer .imageList {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 6px;
+    padding-bottom: 4px;
+
+    background-color: ${BACKGROUND_COLOR.darken(-0.5).alpha(0.3)};
+    filter: drop-shadow(4px 2px 4px #222);
+  }
+
   footer img {
     margin: 0px 8px 0 8px;
     width: 24px;
-    filter: drop-shadow(2px 1px 2px #444);
   }
 `}</style>);
+
+const directionX = Math.random() > 0.5 ? 1 : -1;
+const directionY = Math.random() > 0.5 ? 1 : -1;
 
 const stylesheet = (<style jsx global>{`
   body,html,main,aside,footer,h1,h2 {
     margin: 0;
     padding: 0;
     overflow: hidden;
+  }
+
+  @keyframes animatedBackground {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: ${(Math.random() * 50 + 50) * directionX}% ${(Math.random() * 50 + 50) * directionY}%;
+    }
   }
 
   main {
@@ -115,7 +143,12 @@ const stylesheet = (<style jsx global>{`
     height: ${BROADCAST_HEIGHT}px;
 
     background: ${BACKGROUND_COLOR};
+    background-image: url('/static/${randomElement(backgrounds)}');
     color: ${TEXT_ON_BACKGROUND_COLOR};
+
+    background-position: 0px 0px;
+    background-repeat: repeat-x repeat-y;
+    animation: animatedBackground 120s linear infinite alternate;
 
     display: grid;
     grid-template-columns: auto ${SIDEBAR_WIDTH}px;
@@ -127,6 +160,7 @@ const stylesheet = (<style jsx global>{`
 
   .container h2 {
     filter: drop-shadow(4px 2px 4px #444);
+    margin-bottom: 2px;
   }
 `}</style>);
 
@@ -165,10 +199,13 @@ export default () => {
 
         <footer>
           <div style={{ marginLeft: 16 }} />
-          <img src='/static/github.png' style={{ marginTop: 4.5 }} />
-          <img src='/static/twitch.svg' style={{ marginTop: 4.5 }} />
-          <img src='/static/twitter.svg' style={{ marginTop: 4.5 }} />
-          <h2 style={{ marginLeft: 8 }}>anaisbetts</h2>
+          <div className='imageList'>
+            <img src='/static/github.png' style={{ marginTop: 4.5 }} />
+            <img src='/static/twitch.svg' style={{ marginTop: 4.5 }} />
+            <img src='/static/twitter.svg' style={{ marginTop: 4.5 }} />
+          </div>
+
+          <h2 style={{ marginLeft: 32 }}>@anaisbetts</h2>
         </footer>
       </div>
     </>

@@ -9,6 +9,13 @@ import {
   firebaseBotUser, firebaseConfig,
 } from './firebase-config';
 
+process.on('unhandledRejection', (e: Error) => {
+  console.error(e);
+  console.error(e.message);
+  console.error(e.stack);
+  process.exit(-1);
+});
+
 interface MessageWithClient {
   client: Client;
   channel: string;

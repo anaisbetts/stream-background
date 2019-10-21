@@ -164,12 +164,20 @@ const stylesheet = (<style jsx global>{`
   }
 `}</style>);
 
+const startupTime = (Date.now()) / 1000;
+
 export default () => {
   const theWidth = ('window' in global) ? window.outerWidth : 0;
-  const query = useQuery(() => db.collection('messages').orderBy('timestamp', 'desc').limit(20));
+  const query = useQuery(() => db.collection('messages')
+    .orderBy('timestamp', 'desc').limit(20));
 
   const messages = query ? query.docs.map(x => {
     const data: any = x.data();
+
+    if (startupTime > data.timestamp.seconds) {
+      return <></>;
+    }
+
     return (<li key={data.timestamp}>
       <strong style={{ color: getColorForUser(data.user.username) }}>{data.user.username}</strong>: {data.message}
     </li>);

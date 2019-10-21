@@ -1,14 +1,15 @@
 import { NowRequest, NowResponse } from '@now/node';
 
-import * as LRU from 'lru-cache';
+import LRU from 'lru-cache';
 import { db } from './firebase';
 
 const cache = new LRU<string, string>({ max: 2048, maxAge: 5 * 60 * 1000 });
 
 export default async function (req: NowRequest, res: NowResponse) {
-  const q: string = req.query['slug'];
+  const q = req.query['slug'];
+  const qq = Array.isArray(q) ? q[0] : q;
 
-  const slug = q.split('/')[0] || 'me';
+  const slug = qq.split('/')[0] || 'me';
   let target;
 
   if (cache.has(slug)) {

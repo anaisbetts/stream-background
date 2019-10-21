@@ -8,7 +8,7 @@
     "start": "ts-node ./src/index.ts"
   },
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "firebase": "^6.0.4",
     "micro": "^9.3.4",
     "microrouter": "^3.1.3",

@@ -1,6 +1,9 @@
 {
   "version": 2,
   "name": "ab-stream-background",
+  "alias": [
+    "stream.anais.dev"
+  ],
   "builds": [
     {
       "src": "background/next.config.js",

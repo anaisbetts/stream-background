@@ -2,9 +2,18 @@ import * as React from 'react';
 
 import Head from 'next/head';
 
-import * as Color from 'color';
+// tslint:disable-next-line:variable-name
+const Color = require('color');
+// import * as Color from 'color';
+
+import * as firebase from 'firebase/app';
+import '@firebase/auth';
+
 import { db } from './firebase';
 import { useQuery } from './when-firebase';
+
+import { useEffect, useState } from 'react';
+import { firebaseBotPassword, firebaseBotUser } from '../../bot/src/firebase-config';
 
 const SIDEBAR_WIDTH = 320;
 const FOOTER_HEIGHT = 54;
@@ -17,8 +26,8 @@ let toAdd = 1.0;
 
 const BACKGROUND_COLOR = new Color('#4164cd').desaturate(0.2);
 const TEXT_ON_BACKGROUND_COLOR = new Color('#fff');
-const ACCENT_COLOR = new Color('#88619f');
-const TEXT_ON_ACCENT_COLOR = new Color('#fff');
+// const ACCENT_COLOR = new Color('#88619f');
+// const TEXT_ON_ACCENT_COLOR = new Color('#fff');
 
 function getColorForUser(user: string) {
   if (usernameToColorMap.has(user)) {
@@ -166,8 +175,9 @@ const stylesheet = (<style jsx global>{`
 
 const startupTime = (Date.now()) / 1000;
 
-export default () => {
+const Content: React.FunctionComponent = () => {
   const theWidth = ('window' in global) ? window.outerWidth : 0;
+
   const query = useQuery(() => db.collection('messages')
     .orderBy('timestamp', 'desc').limit(20));
 
@@ -218,4 +228,22 @@ export default () => {
       </div>
     </>
   );
+}
+
+export default () => {
+  const [authVal, setAuthVal] = useState();
+
+  useEffect(() => {
+    firebase.auth().signInWithEmailAndPassword(firebaseBotUser, firebaseBotPassword)
+      .then((x: any) => {
+        console.log('Logged in!');
+        setAuthVal(x);
+      });
+  }, []);
+
+  if (authVal != null) {
+    return <Content />;
+  } else {
+    return <p />;
+  }
 };

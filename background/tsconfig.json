@@ -2,7 +2,6 @@
   "compilerOptions": {
     "removeComments": false,
     "preserveConstEnums": true,
-    "declaration": true,
     "experimentalDecorators": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
@@ -11,11 +10,24 @@
     "noUnusedLocals": true,
     "noImplicitThis": true,
     "noUnusedParameters": true,
-    "module": "commonjs",
+    "module": "esnext",
     "moduleResolution": "node",
     "pretty": true,
     "target": "es6",
-    "jsx": "react",
+    "jsx": "preserve",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
   },
   "lib": [
     "dom",
@@ -24,5 +36,13 @@
   "formatCodeOptions": {
     "indentSize": 2,
     "tabSize": 2
-  }
+  },
+  "exclude": [
+    "node_modules"
+  ],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+  ]
 }

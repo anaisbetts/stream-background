@@ -6,7 +6,7 @@
   ],
   "builds": [
     {
-      "src": "background/next.config.js",
+      "src": "background/package.json",
       "use": "@now/next",
       "config": {
         "maxLambdaSize": "50mb"

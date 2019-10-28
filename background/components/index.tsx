@@ -4,16 +4,9 @@ import Head from 'next/head';
 
 // tslint:disable-next-line:variable-name
 const Color = require('color');
-// import * as Color from 'color';
-
-import * as firebase from 'firebase/app';
-import '@firebase/auth';
 
 import { db } from './firebase';
 import { useQuery } from './when-firebase';
-
-import { useEffect, useState } from 'react';
-import { firebaseBotPassword, firebaseBotUser } from '../../bot/src/firebase-config';
 
 const SIDEBAR_WIDTH = 320;
 const FOOTER_HEIGHT = 54;
@@ -175,23 +168,25 @@ const stylesheet = (<style jsx global>{`
 
 const startupTime = (Date.now()) / 1000;
 
+// tslint:disable-next-line:variable-name
 const Content: React.FunctionComponent = () => {
   const theWidth = ('window' in global) ? window.outerWidth : 0;
 
   const query = useQuery(() => db.collection('messages')
-    .orderBy('timestamp', 'desc').limit(20));
+    .orderBy('timestamp', 'asc').limit(20));
 
-  const messages = query ? query.docs.map(x => {
+  const messages = query ? query.docs.filter(x => x.data().timestamp.seconds > startupTime).map(x => {
     const data: any = x.data();
-
-    if (startupTime > data.timestamp.seconds) {
-      return <></>;
-    }
+    console.log(data.timestamp.seconds);
 
     return (<li key={data.timestamp}>
       <strong style={{ color: getColorForUser(data.user.username) }}>{data.user.username}</strong>: {data.message}
     </li>);
   }) : [];
+
+  if (query) {
+    console.log(messages);
+  }
 
   return (
     <>
@@ -228,11 +223,13 @@ const Content: React.FunctionComponent = () => {
       </div>
     </>
   );
-}
+};
 
 export default () => {
-  const [authVal, setAuthVal] = useState();
+  // const [authVal, setAuthVal] = useState();
+  return <Content />;
 
+  /*
   useEffect(() => {
     firebase.auth().signInWithEmailAndPassword(firebaseBotUser, firebaseBotPassword)
       .then((x: any) => {
@@ -246,4 +243,5 @@ export default () => {
   } else {
     return <p />;
   }
+  */
 };

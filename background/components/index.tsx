@@ -166,7 +166,9 @@ const stylesheet = (<style jsx global>{`
   }
 `}</style>);
 
-const startupTime = (Date.now()) / 1000;
+// NB: Roll our startup time back by 10 minutes or so, which
+// makes chat easier to debug
+const startupTime = (Date.now()) / 1000 - 10 * 60;
 
 // tslint:disable-next-line:variable-name
 const Content: React.FunctionComponent = () => {

@@ -6,19 +6,20 @@ import Head from 'next/head';
 const Color = require('color');
 
 import { db } from './firebase';
-import { useQuery } from './when-firebase';
 
-const SIDEBAR_WIDTH = 320;
-const FOOTER_HEIGHT = 54;
-const BROADCAST_WIDTH = 1920;
-const BROADCAST_HEIGHT = 1080;
+import {
+  BACKGROUND_COLOR, BROADCAST_HEIGHT, BROADCAST_WIDTH,
+  FOOTER_HEIGHT, SIDEBAR_WIDTH,
+  TEXT_ON_BACKGROUND_COLOR,
+} from './size-constants';
+
+import { useQuery } from './when-firebase';
+import BoxWithHeader from './box-with-header';
 
 const usernameToColorMap: Map<string, string> = new Map();
 let nextHue = 0.0;
 let toAdd = 1.0;
 
-const BACKGROUND_COLOR = new Color('#4164cd').desaturate(0.2);
-const TEXT_ON_BACKGROUND_COLOR = new Color('#fff');
 // const ACCENT_COLOR = new Color('#88619f');
 // const TEXT_ON_ACCENT_COLOR = new Color('#fff');
 
@@ -85,7 +86,7 @@ const sidebarStylesheet = (<style jsx global>{`
   }
 `}</style>);
 
-const footerStylesheet = (<style jsx global>{`
+const footerStylesheet = (<style jsx>{`
   footer {
     grid-area: footer;
 
@@ -154,10 +155,11 @@ const stylesheet = (<style jsx global>{`
 
     display: grid;
     grid-template-columns: auto ${SIDEBAR_WIDTH}px;
-    grid-template-rows: auto ${FOOTER_HEIGHT}px;
+    grid-template-rows: auto auto ${FOOTER_HEIGHT}px;
     grid-template-areas:
-      "main aside"
-      "footer aside";
+      "main chat"
+      "main todo"
+      "footer footer";
   }
 
   .container h2 {
@@ -166,28 +168,35 @@ const stylesheet = (<style jsx global>{`
   }
 `}</style>);
 
+const chatStylesheet = (<style jsx>{`
+  ul.messages {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+  }
+`}</style>);
+
 // NB: Roll our startup time back by 10 minutes or so, which
 // makes chat easier to debug
 const startupTime = (Date.now()) / 1000 - 10 * 60;
+const messageLimit = 20;
 
 // tslint:disable-next-line:variable-name
 const Content: React.FunctionComponent = () => {
   const theWidth = ('window' in global) ? window.outerWidth : 0;
 
-  const query = useQuery(() => db.collection('messages')
-    .orderBy('timestamp', 'asc').limit(20));
+  const query = useQuery(() => db.collection('messages').orderBy('timestamp', 'asc'));
 
   const messages = query ? query.docs.filter(x => x.data().timestamp.seconds > startupTime).map(x => {
     const data: any = x.data();
-    console.log(data.timestamp.seconds);
 
     return (<li key={data.timestamp}>
       <strong style={{ color: getColorForUser(data.user.username) }}>{data.user.username}</strong>: {data.message}
     </li>);
   }) : [];
 
-  if (query) {
-    console.log(messages);
+  if (messages.length > messageLimit) {
+    messages.splice(messages.length - messageLimit);
   }
 
   return (
@@ -199,18 +208,20 @@ const Content: React.FunctionComponent = () => {
       {stylesheet}
       {footerStylesheet}
       {sidebarStylesheet}
+      {chatStylesheet}
 
       <div className='container'>
         <main>
           <h1>If you're seeing this then something bad happened!- {theWidth}</h1>
         </main>
 
-        <aside>
-          <h2>Chat</h2>
-          <div className='chat'>
-            <ul>{messages}</ul>
-          </div>
-        </aside>
+        <BoxWithHeader title='Chat' gridId='chat'>
+          <ul className='messages'>{messages}</ul>
+        </BoxWithHeader>
+
+        <BoxWithHeader title='Todo' gridId='todo'>
+          <p>This is Content</p>
+        </BoxWithHeader>
 
         <footer>
           <div style={{ marginLeft: 16 }} />
@@ -238,12 +249,12 @@ export default () => {
         console.log('Logged in!');
         setAuthVal(x);
       });
-  }, []);
+}, []);
 
   if (authVal != null) {
     return <Content />;
   } else {
     return <p />;
-  }
-  */
+}
+*/
 };

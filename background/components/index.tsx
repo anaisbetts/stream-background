@@ -76,7 +76,7 @@ const footerStylesheet = (<style jsx>{`
   }
 `}</style>);
 
-const stylesheetOther = (<style jsx global>{`
+const containerStylesheet = (<style jsx global>{`
   .container {
     display: grid;
     grid-template-columns: auto ${SIDEBAR_WIDTH}px;
@@ -135,10 +135,7 @@ const startupTime = (Date.now()) / 1000 - 10 * 60;
 const messageLimit = 20;
 const isDevMode = !!window.location.href.match(/localhost:\d+/);
 
-// tslint:disable-next-line:variable-name
-const Content: React.FunctionComponent = () => {
-  const theWidth = ('window' in global) ? window.outerWidth : 0;
-
+const MessageList: React.FunctionComponent = () => {
   const query = useQuery(() => db.collection('messages').orderBy('timestamp', 'asc'));
   let messages = Array<JSX.Element>();
 
@@ -158,9 +155,35 @@ const Content: React.FunctionComponent = () => {
     messages.splice(messages.length - messageLimit);
   }
 
+  return (<ul className='messages'>{messages}</ul>);
+}
+
+const FINISHED_EMOJI = "✔";
+const NOT_FINISHED_EMOJI = "🔲";
+const INDENT_SIZE_PX = 16;
+
+const TodoList: React.FunctionComponent = () => {
+  const query = useQuery(() => db.collection('todos').orderBy('order', 'asc'));
+  let todos = Array<JSX.Element>();
+
+  if (query) {
+    todos = query.docs.map(x => {
+      const data: any = x.data();
+      const indent: number = data.indent || 0;
+
+      return (<li key={x.id}><span style={{ marginLeft: indent * INDENT_SIZE_PX, marginRight: 6 }}>{data.completedAt != null ? FINISHED_EMOJI : NOT_FINISHED_EMOJI}</span>{data.description}</li>)
+    });
+  }
+
+  return (<ul className='messages'>{todos}</ul>);
+};
+
+// tslint:disable-next-line:variable-name
+const Content: React.FunctionComponent = () => {
+  const theWidth = ('window' in global) ? window.outerWidth : 0;
   return (
     <PageContainer>
-      {stylesheetOther}
+      {containerStylesheet}
       {footerStylesheet}
       {sidebarStylesheet}
       {chatStylesheet}
@@ -170,11 +193,11 @@ const Content: React.FunctionComponent = () => {
       </main>
 
       <BoxWithHeader title='Chat' gridId='chat'>
-        <ul className='messages'>{messages}</ul>
+        <MessageList />
       </BoxWithHeader>
 
       <BoxWithHeader title='Todo' gridId='todo'>
-        <p>This is Content</p>
+        <TodoList />
       </BoxWithHeader>
 
       <footer>

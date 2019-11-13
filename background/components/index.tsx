@@ -101,6 +101,7 @@ const chatStylesheet = (<style jsx>{`
     margin: 0;
     padding: 0;
     list-style-type: none;
+    line-height: 1.5rem;
   }
 `}</style>);
 

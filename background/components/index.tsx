@@ -1,51 +1,17 @@
 import * as React from 'react';
 
-import Head from 'next/head';
-
-// tslint:disable-next-line:variable-name
-const Color = require('color');
-
 import { db } from './firebase';
 
 import {
-  BACKGROUND_COLOR, BROADCAST_HEIGHT, BROADCAST_WIDTH,
-  FOOTER_HEIGHT, SIDEBAR_WIDTH,
-  TEXT_ON_BACKGROUND_COLOR,
+  BACKGROUND_COLOR, FOOTER_HEIGHT, SIDEBAR_WIDTH,
 } from './size-constants';
 
 import { useQuery } from './when-firebase';
 import BoxWithHeader from './box-with-header';
+import PageContainer from './page-container';
 
-const usernameToColorMap: Map<string, string> = new Map();
-let nextHue = 0.0;
-let toAdd = 1.0;
-
-// const ACCENT_COLOR = new Color('#88619f');
-// const TEXT_ON_ACCENT_COLOR = new Color('#fff');
-
-function getColorForUser(user: string) {
-  if (usernameToColorMap.has(user)) {
-    return usernameToColorMap.get(user);
-  }
-
-  const ret = Color([nextHue * 360.0, 66, 50], 'hsl');
-  usernameToColorMap.set(user, ret.hex());
-
-  if (nextHue + toAdd > 1.0) {
-    toAdd /= 2;
-    nextHue = toAdd;
-  } else {
-    nextHue += toAdd;
-  }
-
-  return ret.hex();
-}
-
-function randomElement<T>(items: T[]) {
-  return items[Math.floor((Math.random() * items.length))];
-}
-
-const backgrounds = ['endless-clouds.svg', 'topography.svg'];
+// tslint:disable-next-line:variable-name
+const Color = require('color');
 
 const sidebarStylesheet = (<style jsx global>{`
   aside {
@@ -59,7 +25,6 @@ const sidebarStylesheet = (<style jsx global>{`
   aside h2 {
     margin-left: 8px;
     margin-top: 8px;
-    font-family: Pacifico;
     z-index: 30;
   }
 
@@ -93,7 +58,6 @@ const footerStylesheet = (<style jsx>{`
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-family: 'Pacifico';
   }
 
   footer .imageList {
@@ -113,46 +77,8 @@ const footerStylesheet = (<style jsx>{`
   }
 `}</style>);
 
-const directionX = Math.random() > 0.5 ? 1 : -1;
-const directionY = Math.random() > 0.5 ? 1 : -1;
-
-const stylesheet = (<style jsx global>{`
-  body,html,main,aside,footer,h1,h2 {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-
-  @keyframes animatedBackground {
-    from {
-      background-position: 0 0;
-    }
-    to {
-      background-position: ${(Math.random() * 50 + 50) * directionX}% ${(Math.random() * 50 + 50) * directionY}%;
-    }
-  }
-
-  main {
-    grid-area: main;
-    background: magenta;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
+const stylesheetOther = (<style jsx global>{`
   .container {
-    max-width: ${BROADCAST_WIDTH}px;
-    max-height: ${BROADCAST_HEIGHT}px;
-    height: ${BROADCAST_HEIGHT}px;
-
-    background: ${BACKGROUND_COLOR};
-    background-image: url('/static/${randomElement(backgrounds)}');
-    color: ${TEXT_ON_BACKGROUND_COLOR};
-
-    background-position: 0px 0px;
-    background-repeat: repeat-x repeat-y;
-    animation: animatedBackground 120s linear infinite alternate;
-
     display: grid;
     grid-template-columns: auto ${SIDEBAR_WIDTH}px;
     grid-template-rows: auto auto ${FOOTER_HEIGHT}px;
@@ -162,9 +88,12 @@ const stylesheet = (<style jsx global>{`
       "footer footer";
   }
 
-  .container h2 {
-    filter: drop-shadow(4px 2px 4px #444);
-    margin-bottom: 2px;
+  main {
+    grid-area: main;
+    background: magenta;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `}</style>);
 
@@ -175,6 +104,33 @@ const chatStylesheet = (<style jsx>{`
     list-style-type: none;
   }
 `}</style>);
+
+const usernameToColorMap: Map<string, string> = new Map();
+let nextHue = 0.0;
+let toAdd = 1.0;
+
+// const ACCENT_COLOR = new Color('#88619f');
+// const TEXT_ON_ACCENT_COLOR = new Color('#fff');
+
+
+
+function getColorForUser(user: string) {
+  if (usernameToColorMap.has(user)) {
+    return usernameToColorMap.get(user);
+  }
+
+  const ret = Color([nextHue * 360.0, 66, 50], 'hsl');
+  usernameToColorMap.set(user, ret.hex());
+
+  if (nextHue + toAdd > 1.0) {
+    toAdd /= 2;
+    nextHue = toAdd;
+  } else {
+    nextHue += toAdd;
+  }
+
+  return ret.hex();
+}
 
 // NB: Roll our startup time back by 10 minutes or so, which
 // makes chat easier to debug
@@ -200,61 +156,37 @@ const Content: React.FunctionComponent = () => {
   }
 
   return (
-    <>
-      <Head>
-        <link href='https://fonts.googleapis.com/css?family=Pacifico&display=swap' rel='stylesheet'></link>
-      </Head>
-
-      {stylesheet}
+    <PageContainer>
+      {stylesheetOther}
       {footerStylesheet}
       {sidebarStylesheet}
       {chatStylesheet}
 
-      <div className='container'>
-        <main>
-          <h1>If you're seeing this then something bad happened!- {theWidth}</h1>
-        </main>
+      <main>
+        <h1>If you're seeing this then something bad happened!- {theWidth}</h1>
+      </main>
 
-        <BoxWithHeader title='Chat' gridId='chat'>
-          <ul className='messages'>{messages}</ul>
-        </BoxWithHeader>
+      <BoxWithHeader title='Chat' gridId='chat'>
+        <ul className='messages'>{messages}</ul>
+      </BoxWithHeader>
 
-        <BoxWithHeader title='Todo' gridId='todo'>
-          <p>This is Content</p>
-        </BoxWithHeader>
+      <BoxWithHeader title='Todo' gridId='todo'>
+        <p>This is Content</p>
+      </BoxWithHeader>
 
-        <footer>
-          <div style={{ marginLeft: 16 }} />
-          <div className='imageList'>
-            <img src='/static/github.png' style={{ marginTop: 4.5 }} />
-            <img src='/static/twitch.svg' style={{ marginTop: 4.5 }} />
-            <img src='/static/twitter.svg' style={{ marginTop: 4.5 }} />
-          </div>
+      <footer>
+        <div style={{ marginLeft: 16 }} />
+        <div className='imageList'>
+          <img src='/static/github.png' style={{ marginTop: 4.5 }} />
+          <img src='/static/twitch.svg' style={{ marginTop: 4.5 }} />
+          <img src='/static/twitter.svg' style={{ marginTop: 4.5 }} />
+        </div>
 
-          <h2 style={{ marginLeft: 32 }}>@anaisbetts</h2>
-        </footer>
-      </div>
-    </>
-  );
+        <h2 style={{ marginLeft: 32 }}>@anaisbetts</h2>
+      </footer>
+
+    </PageContainer>
+  )
 };
 
-export default () => {
-  // const [authVal, setAuthVal] = useState();
-  return <Content />;
-
-  /*
-  useEffect(() => {
-    firebase.auth().signInWithEmailAndPassword(firebaseBotUser, firebaseBotPassword)
-      .then((x: any) => {
-        console.log('Logged in!');
-        setAuthVal(x);
-      });
-}, []);
-
-  if (authVal != null) {
-    return <Content />;
-  } else {
-    return <p />;
-}
-*/
-};
+export default Content;

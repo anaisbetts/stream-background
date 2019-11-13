@@ -43,6 +43,7 @@ const stylesheet = (<style jsx global>{`
     background-position: 0px 0px;
     background-repeat: repeat-x repeat-y;
     animation: animatedBackground 120s linear infinite alternate;
+    font-family: Convection, Arial;
   }
 
   .container h2 {

@@ -33,7 +33,6 @@ const sidebarStylesheet = (<style jsx global>{`
     margin-right: 8px;
     margin-top: 4px;
     margin-bottom: 4px;
-    font-family: Convection, Arial;
     word-wrap: break-word;
     flex: 1 1 auto;
 
@@ -112,8 +111,6 @@ let toAdd = 1.0;
 // const ACCENT_COLOR = new Color('#88619f');
 // const TEXT_ON_ACCENT_COLOR = new Color('#fff');
 
-
-
 function getColorForUser(user: string) {
   if (usernameToColorMap.has(user)) {
     return usernameToColorMap.get(user);
@@ -136,20 +133,26 @@ function getColorForUser(user: string) {
 // makes chat easier to debug
 const startupTime = (Date.now()) / 1000 - 10 * 60;
 const messageLimit = 20;
+const isDevMode = !!window.location.href.match(/localhost:\d+/);
 
 // tslint:disable-next-line:variable-name
 const Content: React.FunctionComponent = () => {
   const theWidth = ('window' in global) ? window.outerWidth : 0;
 
   const query = useQuery(() => db.collection('messages').orderBy('timestamp', 'asc'));
+  let messages = Array<JSX.Element>();
 
-  const messages = query ? query.docs.filter(x => x.data().timestamp.seconds > startupTime).map(x => {
-    const data: any = x.data();
+  if (query) {
+    messages = query.docs
+      .filter(x => isDevMode || x.data().timestamp.seconds > startupTime)
+      .map(x => {
+        const data: any = x.data();
 
-    return (<li key={data.timestamp}>
-      <strong style={{ color: getColorForUser(data.user.username) }}>{data.user.username}</strong>: {data.message}
-    </li>);
-  }) : [];
+        return (<li key={data.timestamp}>
+          <strong style={{ color: getColorForUser(data.user.username) }}>{data.user.username}</strong>: {data.message}
+        </li>);
+      });
+  }
 
   if (messages.length > messageLimit) {
     messages.splice(messages.length - messageLimit);

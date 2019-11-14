@@ -1,49 +1,14 @@
 import * as React from 'react';
 
-import PageContainer from "../components/page-container";
-import { useQuery } from '../components/when-firebase';
-import { db } from '../components/firebase';
+import dynamic from 'next/dynamic';
 
-const TodoList: React.FunctionComponent = () => {
-  const query = useQuery(() => db.collection('todos').orderBy('order', 'asc'));
-  let todos = Array<JSX.Element>();
+// tslint:disable-next-line:variable-name
+const SSRIsAStupidFeatureThatIsMoreTroubleThanItsWorth = dynamic(() => import('../components/dashboard'), {
+  ssr: false,
+});
 
-  if (query) {
-    todos = query.docs.map(x => {
-      const data: any = x.data();
-      //const indent: number = data.indent || 0;
-
-      return (<li key={x.id}>
-        <input type="text" defaultValue={data.description} onChange={v => db.doc(x.ref.path).set({ description: v.target.value })} />
-      </li>)
-    });
-  }
-
-  return (<ul>{todos}</ul>);
-};
-
-export default () => {
-  return (
-    <>
-      <style jsx global>{`
-        ul {
-          margin: 0;
-          padding: 0;
-          list-style-type: none
-        }
-
-        .container {
-          padding: 128px;
-        }
-      `}</style>
-
-      <PageContainer>
-        <h2>TODO Editor</h2>
-        <ul style={{ marginTop: 16 }}>
-          <TodoList />
-        </ul>
-        <button style={{ marginTop: 16 }}>Add Item</button>
-      </PageContainer>
-    </>
-  );
-}
+export default () => (
+  <>
+    <SSRIsAStupidFeatureThatIsMoreTroubleThanItsWorth />
+  </>
+);

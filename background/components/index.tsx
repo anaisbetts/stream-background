@@ -3,7 +3,7 @@ import * as React from 'react';
 import { db } from './firebase';
 
 import {
-  BACKGROUND_COLOR, FOOTER_HEIGHT, SIDEBAR_WIDTH,
+  BACKGROUND_COLOR, FOOTER_HEIGHT, SIDEBAR_WIDTH, BROADCAST_WIDTH, BROADCAST_HEIGHT,
 } from './size-constants';
 
 import { useQuery } from './when-firebase';
@@ -79,6 +79,11 @@ const footerStylesheet = (<style jsx>{`
 const containerStylesheet = (<style jsx global>{`
   .container {
     display: grid;
+
+    max-width: ${BROADCAST_WIDTH}px;
+    max-height: ${BROADCAST_HEIGHT}px;
+    height: ${BROADCAST_HEIGHT}px;
+
     grid-template-columns: auto ${SIDEBAR_WIDTH}px;
     grid-template-rows: auto auto ${FOOTER_HEIGHT}px;
     grid-template-areas:

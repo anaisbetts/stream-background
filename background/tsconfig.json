@@ -7,7 +7,7 @@
     "noImplicitReturns": true,
     "suppressImplicitAnyIndexErrors": true,
     "strictNullChecks": true,
-    "noUnusedLocals": true,
+    "noUnusedLocals": false,
     "noImplicitThis": true,
     "noUnusedParameters": true,
     "module": "esnext",

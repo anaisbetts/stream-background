@@ -2,8 +2,7 @@ import * as React from 'react';
 import Head from 'next/head';
 
 import {
-  BACKGROUND_COLOR, BROADCAST_HEIGHT, BROADCAST_WIDTH,
-  TEXT_ON_BACKGROUND_COLOR,
+  BACKGROUND_COLOR, TEXT_ON_BACKGROUND_COLOR,
 } from './size-constants';
 
 const backgrounds = ['endless-clouds.svg', 'topography.svg'];
@@ -32,9 +31,6 @@ const stylesheet = (<style jsx global>{`
   }
 
   .container {
-    max-width: ${BROADCAST_WIDTH}px;
-    max-height: ${BROADCAST_HEIGHT}px;
-    height: ${BROADCAST_HEIGHT}px;
 
     background: ${BACKGROUND_COLOR};
     background-image: url('/static/${randomElement(backgrounds)}');

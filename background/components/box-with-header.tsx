@@ -10,7 +10,6 @@ const BoxWithHeader: React.FunctionComponent<{ title: string, gridId: string }> 
         display: flex;
         flex-direction: column;
         align-items: stretch;
-        margin-bottom: ${FOOTER_HEIGHT}px;
         flex: 1 1 auto;
       }
 

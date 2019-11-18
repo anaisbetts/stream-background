@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, empty } from 'rxjs';
 import { flatMap, publish, refCount, retry } from 'rxjs/operators';
 
 import * as firebase from 'firebase';
@@ -79,6 +79,8 @@ async function main() {
   );
 
   const writingListener = listen.pipe(flatMap(async x => {
+    if (x.userState['message-type'] !== 'chat') return x;
+
     await db.collection('messages').add({
       channel: x.channel,
       user: x.userState,

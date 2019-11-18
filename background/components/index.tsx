@@ -52,7 +52,7 @@ const sidebarStylesheet = (<style jsx global>{`
 
 const footerStylesheet = (<style jsx>{`
   footer {
-    grid-area: footer;
+    height: ${FOOTER_HEIGHT}px !important;
 
     display: flex;
     flex-direction: row;
@@ -78,18 +78,23 @@ const footerStylesheet = (<style jsx>{`
 
 const containerStylesheet = (<style jsx global>{`
   .container {
-    display: grid;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 
-    max-width: ${BROADCAST_WIDTH}px;
-    max-height: ${BROADCAST_HEIGHT}px;
     height: ${BROADCAST_HEIGHT}px;
+    width: ${BROADCAST_WIDTH}px;
+  }
+
+  .grid {
+    display: grid;
+    flex: 1 1 auto;
 
     grid-template-columns: auto ${SIDEBAR_WIDTH}px;
-    grid-template-rows: auto auto ${FOOTER_HEIGHT}px;
+    grid-template-rows: 75% 25%;
     grid-template-areas:
       "main chat"
       "main todo"
-      "footer footer";
   }
 
   main {
@@ -122,7 +127,8 @@ function getColorForUser(user: string) {
     return usernameToColorMap.get(user);
   }
 
-  const ret = Color([nextHue * 360.0, 66, 50], 'hsl');
+  const ret = Color([nextHue * 300.0, 66, 50], 'hsl');
+  console.log(`Setting ${user} to ${nextHue}!`);
   usernameToColorMap.set(user, ret.hex());
 
   if (nextHue + toAdd > 1.0) {
@@ -142,7 +148,9 @@ const messageLimit = 20;
 const isDevMode = !!window.location.href.match(/localhost:\d+/);
 
 const MessageList: React.FunctionComponent = () => {
-  const query = useQuery(() => db.collection('messages').orderBy('timestamp', 'asc'));
+  const query = useQuery(() => db.collection('messages')
+    .orderBy('timestamp', 'desc')
+    .limit(messageLimit));
   let messages = Array<JSX.Element>();
 
   if (query) {
@@ -157,10 +165,7 @@ const MessageList: React.FunctionComponent = () => {
       });
   }
 
-  if (messages.length > messageLimit) {
-    messages.splice(messages.length - messageLimit);
-  }
-
+  messages.reverse();
   return (<ul className='messages'>{messages}</ul>);
 }
 
@@ -205,17 +210,19 @@ const Content: React.FunctionComponent = () => {
         {footerStylesheet}
         {chatStylesheet}
 
-        <main>
-          <h1>If you're seeing this then something bad happened!- {theWidth}</h1>
-        </main>
+        <div className='grid'>
+          <main>
+            <h1>If you're seeing this then something bad happened!- {theWidth}</h1>
+          </main>
 
-        <BoxWithHeader title='Chat' gridId='chat'>
-          <MessageList />
-        </BoxWithHeader>
+          <BoxWithHeader title='Chat' gridId='chat'>
+            <MessageList />
+          </BoxWithHeader>
 
-        <BoxWithHeader title='Todo' gridId='todo'>
-          <TodoList />
-        </BoxWithHeader>
+          <BoxWithHeader title='Todo' gridId='todo'>
+            <TodoList />
+          </BoxWithHeader>
+        </div>
 
         <footer>
           <div style={{ marginLeft: 16 }} />

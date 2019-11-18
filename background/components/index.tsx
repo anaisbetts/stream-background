@@ -91,7 +91,7 @@ const containerStylesheet = (<style jsx global>{`
     flex: 1 1 auto;
 
     grid-template-columns: auto ${SIDEBAR_WIDTH}px;
-    grid-template-rows: 75% 25%;
+    grid-template-rows: 66% 33%;
     grid-template-areas:
       "main chat"
       "main todo"
@@ -112,6 +112,23 @@ const chatStylesheet = (<style jsx>{`
     padding: 0;
     list-style-type: none;
     line-height: 1.5rem;
+  }
+
+  .messages li {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  ul.todos {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    line-height: 1.5rem;
+  }
+
+  .todos li {
+    margin-top: 16px;
+    margin-bottom: 16px;
   }
 `}</style>);
 
@@ -144,7 +161,7 @@ function getColorForUser(user: string) {
 // NB: Roll our startup time back by 10 minutes or so, which
 // makes chat easier to debug
 const startupTime = (Date.now()) / 1000 - 10 * 60;
-const messageLimit = 20;
+const messageLimit = 10;
 const isDevMode = !!window.location.href.match(/localhost:\d+/);
 
 const MessageList: React.FunctionComponent = () => {
@@ -195,7 +212,7 @@ const TodoList: React.FunctionComponent = () => {
     });
   }
 
-  return (<ul className='messages'>{todos}</ul>);
+  return (<ul className='todos'>{todos}</ul>);
 };
 
 // tslint:disable-next-line:variable-name

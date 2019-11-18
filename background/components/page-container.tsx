@@ -31,7 +31,6 @@ const stylesheet = (<style jsx global>{`
   }
 
   .container {
-
     background: ${BACKGROUND_COLOR};
     background-image: url('/static/${randomElement(backgrounds)}');
     color: ${TEXT_ON_BACKGROUND_COLOR};
@@ -40,6 +39,7 @@ const stylesheet = (<style jsx global>{`
     background-repeat: repeat-x repeat-y;
     animation: animatedBackground 120s linear infinite alternate;
     font-family: Convection, Arial;
+    font-size: 1.5em;
   }
 
   .container h2 {

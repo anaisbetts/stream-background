@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState } from 'react';
 
 import { SortableContainer, SortableElement, SortEndHandler } from 'react-sortable-hoc';
 import arrayMove from 'array-move';
@@ -8,19 +9,41 @@ import PageContainer from "./page-container";
 import { useQuery, useDocument } from './when-firebase';
 import { db } from './firebase';
 import RequireGoogleAuth from './require-google-auth';
-import { useState } from 'react';
 
 type OnDeleteCallback = ((q: QueryDocumentSnapshot) => void);
+
+const INDENT_SIZE_PX = 16;
+
+function clamp(n: number, min: number, max: number) {
+  if (n < min) return min;
+  if (n > max) return max;
+  return n;
+}
 
 const _TodoItem: React.FunctionComponent<{ q: QueryDocumentSnapshot, onDelete: OnDeleteCallback }> = ({ q, onDelete }) => {
   const data = q.data();
 
-  return <li key={q.id} style={{ paddingLeft: 3, background: 'green' }}>
+  const indent: number = data.indent || 0;
+  return <li key={q.id} style={{ paddingLeft: 3, marginLeft: indent * INDENT_SIZE_PX, marginTop: 8 }}>
+    <input type='checkbox' defaultChecked={data.completedAt} onClick={() => {
+      q.ref.update({ completedAt: data.completedAt ? null : new Date() })
+        .catch(ex => console.error(`Failed to update completedAt! ${ex.message}`));
+    }}></input>
+
     <input type="text"
       defaultValue={data.description}
-      onChange={v => db.doc(q.ref.path)
-        .update({ description: v.target.value })} />
-    <button onClick={() => onDelete(q)}>X</button>
+      onKeyDownCapture={k => {
+        if (k.keyCode !== 9) return;
+        k.preventDefault();
+
+        const i: number = data.indent || 0;
+        q.ref.update({ indent: clamp(i + (k.shiftKey ? -1 : 1), 0, 10) })
+          .catch(ex => console.error(`Failed to update indent! ${ex.message}`));
+      }}
+      onChange={v => q.ref.update({ description: v.target.value })}
+    />
+
+    <button style={{ marginLeft: 8 }} onClick={() => onDelete(q)}>X</button>
   </li>
 };
 

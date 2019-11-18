@@ -6,7 +6,7 @@ import {
   BACKGROUND_COLOR, FOOTER_HEIGHT, SIDEBAR_WIDTH, BROADCAST_WIDTH, BROADCAST_HEIGHT,
 } from './size-constants';
 
-import { useQuery } from './when-firebase';
+import { useQuery, useDocument } from './when-firebase';
 import BoxWithHeader from './box-with-header';
 import PageContainer from './page-container';
 
@@ -169,11 +169,20 @@ const NOT_FINISHED_EMOJI = "🔲";
 const INDENT_SIZE_PX = 16;
 
 const TodoList: React.FunctionComponent = () => {
-  const query = useQuery(() => db.collection('todos').orderBy('order', 'asc'));
+  const query = useQuery(() => db.collection('todos'));
+  const metadata = useDocument(() => db.doc('metadata/todoOrdering'));
   let todos = Array<JSX.Element>();
 
-  if (query) {
-    todos = query.docs.map(x => {
+  if (query && metadata) {
+    const lookup = query.docs.reduce((acc, x) => {
+      acc[x.id] = x;
+      return acc;
+    }, {});
+
+    const order: string[] = metadata.data()!.order;
+    const docs = order.map(id => lookup[id]);
+
+    todos = docs.map(x => {
       const data: any = x.data();
       const indent: number = data.indent || 0;
 
@@ -188,36 +197,39 @@ const TodoList: React.FunctionComponent = () => {
 const Content: React.FunctionComponent = () => {
   const theWidth = ('window' in global) ? window.outerWidth : 0;
   return (
-    <PageContainer>
+    <>
       {containerStylesheet}
-      {footerStylesheet}
       {sidebarStylesheet}
-      {chatStylesheet}
 
-      <main>
-        <h1>If you're seeing this then something bad happened!- {theWidth}</h1>
-      </main>
+      <PageContainer>
+        {footerStylesheet}
+        {chatStylesheet}
 
-      <BoxWithHeader title='Chat' gridId='chat'>
-        <MessageList />
-      </BoxWithHeader>
+        <main>
+          <h1>If you're seeing this then something bad happened!- {theWidth}</h1>
+        </main>
 
-      <BoxWithHeader title='Todo' gridId='todo'>
-        <TodoList />
-      </BoxWithHeader>
+        <BoxWithHeader title='Chat' gridId='chat'>
+          <MessageList />
+        </BoxWithHeader>
 
-      <footer>
-        <div style={{ marginLeft: 16 }} />
-        <div className='imageList'>
-          <img src='/static/github.png' style={{ marginTop: 4.5 }} />
-          <img src='/static/twitch.svg' style={{ marginTop: 4.5 }} />
-          <img src='/static/twitter.svg' style={{ marginTop: 4.5 }} />
-        </div>
+        <BoxWithHeader title='Todo' gridId='todo'>
+          <TodoList />
+        </BoxWithHeader>
 
-        <h2 style={{ marginLeft: 32 }}>@anaisbetts</h2>
-      </footer>
+        <footer>
+          <div style={{ marginLeft: 16 }} />
+          <div className='imageList'>
+            <img src='/static/github.png' style={{ marginTop: 4.5 }} />
+            <img src='/static/twitch.svg' style={{ marginTop: 4.5 }} />
+            <img src='/static/twitter.svg' style={{ marginTop: 4.5 }} />
+          </div>
 
-    </PageContainer>
+          <h2 style={{ marginLeft: 32 }}>@anaisbetts</h2>
+        </footer>
+
+      </PageContainer>
+    </>
   )
 };
 

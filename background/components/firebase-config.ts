@@ -1,0 +1,1 @@
+../../bot/src/firebase-config.ts

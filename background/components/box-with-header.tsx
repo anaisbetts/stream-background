@@ -22,9 +22,9 @@ const BoxWithHeader: React.FunctionComponent<{ title: string, gridId: string }> 
 
       .content {
         margin-left: 8px;
-        margin-right: 8px;
-        margin-top: 4px;
-        margin-bottom: 4px;
+        margin-right: 16px;
+        margin-top: 2px;
+        margin-bottom: 2px;
         font-family: Convection, Arial;
         word-wrap: break-word;
 

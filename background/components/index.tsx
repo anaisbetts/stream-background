@@ -189,6 +189,7 @@ const MessageList: React.FunctionComponent = () => {
 const FINISHED_EMOJI = "✔";
 const NOT_FINISHED_EMOJI = "🔲";
 const INDENT_SIZE_PX = 16;
+const MAX_TODOS = 5;
 
 const TodoList: React.FunctionComponent = () => {
   const query = useQuery(() => db.collection('todos'));
@@ -202,7 +203,7 @@ const TodoList: React.FunctionComponent = () => {
     }, {});
 
     const order: string[] = metadata.data()!.order;
-    const docs = order.map(id => lookup[id]);
+    const docs = order.slice(0, MAX_TODOS).map(id => lookup[id]);
 
     todos = docs.map(x => {
       const data: any = x.data();
@@ -241,7 +242,8 @@ const Content: React.FunctionComponent = () => {
           </BoxWithHeader>
         </div>
 
-        <footer>
+        {/* TODO: WHY DO WE NEED -12?????? */}
+        <footer style={{ marginTop: -12 }}>
           <div style={{ marginLeft: 16 }} />
           <div className='imageList'>
             <img src='/static/github.png' style={{ marginTop: 4.5 }} />

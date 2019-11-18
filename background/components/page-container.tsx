@@ -39,13 +39,14 @@ const stylesheet = (<style jsx global>{`
     background-repeat: repeat-x repeat-y;
     animation: animatedBackground 120s linear infinite alternate;
     font-family: Convection, Arial;
-    font-size: 1.5em;
+    font-size: 1.35em;
   }
 
   .container h2 {
     filter: drop-shadow(4px 2px 4px #444);
     margin-bottom: 2px;
     font-family: Pacifico;
+    font-size: 1.5rem;
   }
 `}</style>);
 

@@ -115,6 +115,26 @@ const TodoList: React.FunctionComponent = () => {
   </>);
 };
 
+const AliasList = () => {
+  const query = useQuery(() => db.collection('aliases'));
+
+  if (!query) {
+    return <ul />
+  }
+
+  const items = query.docs.map(q => {
+    const { slug, target } = q.data();
+
+    return (
+      <li key={q.id} style={{ marginTop: 4 }}>
+        /{slug} ➡ <a href={target}>{target}</a> ({q.id})
+      </li>
+    )
+  });
+
+  return (<ul>{items}</ul>);
+}
+
 export default () => {
   return (
     <>
@@ -129,12 +149,23 @@ export default () => {
           padding: 128px;
           height: 100vw;
         }
+
+        a {
+          color: inherit;
+        }
+
+        ul {
+          overflow-y: auto;
+        }
       `}</style>
 
       <RequireGoogleAuth>
         <PageContainer>
           <h2>TODO Editor</h2>
           <TodoList />
+
+          <h2 style={{ marginTop: 64 }}>Alias List</h2>
+          <AliasList />
         </PageContainer>
       </RequireGoogleAuth>
     </>

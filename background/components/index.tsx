@@ -1,50 +1,17 @@
 import * as React from 'react';
 
-import Head from 'next/head';
+import { db } from './firebase';
+
+import {
+  BACKGROUND_COLOR, FOOTER_HEIGHT, SIDEBAR_WIDTH, BROADCAST_WIDTH, BROADCAST_HEIGHT,
+} from './size-constants';
+
+import { useQuery, useDocument } from './when-firebase';
+import BoxWithHeader from './box-with-header';
+import PageContainer from './page-container';
 
 // tslint:disable-next-line:variable-name
 const Color = require('color');
-
-import { db } from './firebase';
-import { useQuery } from './when-firebase';
-
-const SIDEBAR_WIDTH = 320;
-const FOOTER_HEIGHT = 54;
-const BROADCAST_WIDTH = 1920;
-const BROADCAST_HEIGHT = 1080;
-
-const usernameToColorMap: Map<string, string> = new Map();
-let nextHue = 0.0;
-let toAdd = 1.0;
-
-const BACKGROUND_COLOR = new Color('#4164cd').desaturate(0.2);
-const TEXT_ON_BACKGROUND_COLOR = new Color('#fff');
-// const ACCENT_COLOR = new Color('#88619f');
-// const TEXT_ON_ACCENT_COLOR = new Color('#fff');
-
-function getColorForUser(user: string) {
-  if (usernameToColorMap.has(user)) {
-    return usernameToColorMap.get(user);
-  }
-
-  const ret = Color([nextHue * 360.0, 66, 50], 'hsl');
-  usernameToColorMap.set(user, ret.hex());
-
-  if (nextHue + toAdd > 1.0) {
-    toAdd /= 2;
-    nextHue = toAdd;
-  } else {
-    nextHue += toAdd;
-  }
-
-  return ret.hex();
-}
-
-function randomElement<T>(items: T[]) {
-  return items[Math.floor((Math.random() * items.length))];
-}
-
-const backgrounds = ['endless-clouds.svg', 'topography.svg'];
 
 const sidebarStylesheet = (<style jsx global>{`
   aside {
@@ -58,7 +25,6 @@ const sidebarStylesheet = (<style jsx global>{`
   aside h2 {
     margin-left: 8px;
     margin-top: 8px;
-    font-family: Pacifico;
     z-index: 30;
   }
 
@@ -67,7 +33,6 @@ const sidebarStylesheet = (<style jsx global>{`
     margin-right: 8px;
     margin-top: 4px;
     margin-bottom: 4px;
-    font-family: Convection, Arial;
     word-wrap: break-word;
     flex: 1 1 auto;
 
@@ -85,14 +50,13 @@ const sidebarStylesheet = (<style jsx global>{`
   }
 `}</style>);
 
-const footerStylesheet = (<style jsx global>{`
+const footerStylesheet = (<style jsx>{`
   footer {
-    grid-area: footer;
+    height: ${FOOTER_HEIGHT}px !important;
 
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-family: 'Pacifico';
   }
 
   footer .imageList {
@@ -112,23 +76,25 @@ const footerStylesheet = (<style jsx global>{`
   }
 `}</style>);
 
-const directionX = Math.random() > 0.5 ? 1 : -1;
-const directionY = Math.random() > 0.5 ? 1 : -1;
+const containerStylesheet = (<style jsx global>{`
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
 
-const stylesheet = (<style jsx global>{`
-  body,html,main,aside,footer,h1,h2 {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+    height: ${BROADCAST_HEIGHT}px;
+    width: ${BROADCAST_WIDTH}px;
   }
 
-  @keyframes animatedBackground {
-    from {
-      background-position: 0 0;
-    }
-    to {
-      background-position: ${(Math.random() * 50 + 50) * directionX}% ${(Math.random() * 50 + 50) * directionY}%;
-    }
+  .grid {
+    display: grid;
+    flex: 1 1 auto;
+
+    grid-template-columns: auto ${SIDEBAR_WIDTH}px;
+    grid-template-rows: 66% 33%;
+    grid-template-areas:
+      "main chat"
+      "main todo"
   }
 
   main {
@@ -138,79 +104,142 @@ const stylesheet = (<style jsx global>{`
     align-items: center;
     justify-content: center;
   }
+`}</style>);
 
-  .container {
-    max-width: ${BROADCAST_WIDTH}px;
-    max-height: ${BROADCAST_HEIGHT}px;
-    height: ${BROADCAST_HEIGHT}px;
-
-    background: ${BACKGROUND_COLOR};
-    background-image: url('/static/${randomElement(backgrounds)}');
-    color: ${TEXT_ON_BACKGROUND_COLOR};
-
-    background-position: 0px 0px;
-    background-repeat: repeat-x repeat-y;
-    animation: animatedBackground 120s linear infinite alternate;
-
-    display: grid;
-    grid-template-columns: auto ${SIDEBAR_WIDTH}px;
-    grid-template-rows: auto ${FOOTER_HEIGHT}px;
-    grid-template-areas:
-      "main aside"
-      "footer aside";
+const chatStylesheet = (<style jsx>{`
+  ul.messages {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    line-height: 1.5rem;
   }
 
-  .container h2 {
-    filter: drop-shadow(4px 2px 4px #444);
-    margin-bottom: 2px;
+  .messages li {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  ul.todos {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+    line-height: 1.5rem;
+  }
+
+  .todos li {
+    margin-top: 16px;
+    margin-bottom: 16px;
   }
 `}</style>);
+
+const usernameToColorMap: Map<string, string> = new Map();
+let nextHue = 0.0;
+let toAdd = 1.0;
+
+// const ACCENT_COLOR = new Color('#88619f');
+// const TEXT_ON_ACCENT_COLOR = new Color('#fff');
+
+function getColorForUser(user: string) {
+  if (usernameToColorMap.has(user)) {
+    return usernameToColorMap.get(user);
+  }
+
+  const ret = Color([nextHue * 300.0, 66, 50], 'hsl');
+  console.log(`Setting ${user} to ${nextHue}!`);
+  usernameToColorMap.set(user, ret.hex());
+
+  if (nextHue + toAdd > 1.0) {
+    toAdd /= 2;
+    nextHue = toAdd;
+  } else {
+    nextHue += toAdd;
+  }
+
+  return ret.hex();
+}
 
 // NB: Roll our startup time back by 10 minutes or so, which
 // makes chat easier to debug
 const startupTime = (Date.now()) / 1000 - 10 * 60;
+const messageLimit = 10;
+const isDevMode = !!window.location.href.match(/localhost:\d+/);
+
+const MessageList: React.FunctionComponent = () => {
+  const query = useQuery(() => db.collection('messages')
+    .orderBy('timestamp', 'desc')
+    .limit(messageLimit));
+  let messages = Array<JSX.Element>();
+
+  if (query) {
+    messages = query.docs
+      .filter(x => isDevMode || x.data().timestamp.seconds > startupTime)
+      .map(x => {
+        const data: any = x.data();
+
+        return (<li key={data.timestamp}>
+          <strong style={{ color: getColorForUser(data.user.username) }}>{data.user.username}</strong>: {data.message}
+        </li>);
+      });
+  }
+
+  messages.reverse();
+  return (<ul className='messages'>{messages}</ul>);
+}
+
+const FINISHED_EMOJI = "✔";
+const NOT_FINISHED_EMOJI = "🔲";
+const INDENT_SIZE_PX = 16;
+
+const TodoList: React.FunctionComponent = () => {
+  const query = useQuery(() => db.collection('todos'));
+  const metadata = useDocument(() => db.doc('metadata/todoOrdering'));
+  let todos = Array<JSX.Element>();
+
+  if (query && metadata) {
+    const lookup = query.docs.reduce((acc, x) => {
+      acc[x.id] = x;
+      return acc;
+    }, {});
+
+    const order: string[] = metadata.data()!.order;
+    const docs = order.map(id => lookup[id]);
+
+    todos = docs.map(x => {
+      const data: any = x.data();
+      const indent: number = data.indent || 0;
+
+      return (<li key={x.id}><span style={{ marginLeft: indent * INDENT_SIZE_PX, marginRight: 6 }}>{data.completedAt != null ? FINISHED_EMOJI : NOT_FINISHED_EMOJI}</span>{data.description}</li>)
+    });
+  }
+
+  return (<ul className='todos'>{todos}</ul>);
+};
 
 // tslint:disable-next-line:variable-name
 const Content: React.FunctionComponent = () => {
   const theWidth = ('window' in global) ? window.outerWidth : 0;
-
-  const query = useQuery(() => db.collection('messages')
-    .orderBy('timestamp', 'asc').limit(20));
-
-  const messages = query ? query.docs.filter(x => x.data().timestamp.seconds > startupTime).map(x => {
-    const data: any = x.data();
-    console.log(data.timestamp.seconds);
-
-    return (<li key={data.timestamp}>
-      <strong style={{ color: getColorForUser(data.user.username) }}>{data.user.username}</strong>: {data.message}
-    </li>);
-  }) : [];
-
-  if (query) {
-    console.log(messages);
-  }
-
   return (
     <>
-      <Head>
-        <link href='https://fonts.googleapis.com/css?family=Pacifico&display=swap' rel='stylesheet'></link>
-      </Head>
-
-      {stylesheet}
-      {footerStylesheet}
+      {containerStylesheet}
       {sidebarStylesheet}
 
-      <div className='container'>
-        <main>
-          <h1>If you're seeing this then something bad happened!- {theWidth}</h1>
-        </main>
+      <PageContainer>
+        {footerStylesheet}
+        {chatStylesheet}
 
-        <aside>
-          <h2>Chat</h2>
-          <div className='chat'>
-            <ul>{messages}</ul>
-          </div>
-        </aside>
+        <div className='grid'>
+          <main>
+            <h1>If you're seeing this then something bad happened!- {theWidth}</h1>
+          </main>
+
+          <BoxWithHeader title='Chat' gridId='chat'>
+            <MessageList />
+          </BoxWithHeader>
+
+          <BoxWithHeader title='Todo' gridId='todo'>
+            <TodoList />
+          </BoxWithHeader>
+        </div>
 
         <footer>
           <div style={{ marginLeft: 16 }} />
@@ -222,28 +251,10 @@ const Content: React.FunctionComponent = () => {
 
           <h2 style={{ marginLeft: 32 }}>@anaisbetts</h2>
         </footer>
-      </div>
+
+      </PageContainer>
     </>
-  );
+  )
 };
 
-export default () => {
-  // const [authVal, setAuthVal] = useState();
-  return <Content />;
-
-  /*
-  useEffect(() => {
-    firebase.auth().signInWithEmailAndPassword(firebaseBotUser, firebaseBotPassword)
-      .then((x: any) => {
-        console.log('Logged in!');
-        setAuthVal(x);
-      });
-  }, []);
-
-  if (authVal != null) {
-    return <Content />;
-  } else {
-    return <p />;
-  }
-  */
-};
+export default Content;

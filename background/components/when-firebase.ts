@@ -13,7 +13,7 @@ import {
 } from '@whenjs/when';
 
 import { useState } from 'react';
-import { concat, Observable, of } from 'rxjs';
+import { concat, Observable, of, Observer } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 import { useObservable } from './use-helpers';
 
@@ -78,7 +78,7 @@ export function lazyForDocument<T extends Model, TProp>(
   );
 }
 
-export function useDocument<T>(
+export function useDocumentData<T>(
   doc: () => DocumentReference,
   snapshot?: DocumentSnapshot,
 ) {
@@ -92,6 +92,13 @@ export function useDocument<T>(
     const update = documentUpdates(d).pipe(map(x => toData<T>(x)));
 
     return concat(initial, update);
+  });
+}
+
+export function useDocument(doc: () => DocumentReference) {
+  return useObservable(() => {
+    return new Observable((subj: Observer<DocumentSnapshot>) =>
+      doc().onSnapshot(subj));
   });
 }
 

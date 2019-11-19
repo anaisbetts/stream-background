@@ -32,8 +32,8 @@ const BoxWithHeader: React.FunctionComponent<{ title: string, gridId: string }> 
         border-radius: 6px;
         padding: 8px;
         filter: drop-shadow(4px 2px 4px #222);
-        z-index: 10;
         flex: 1 1 auto;
+        height: 0;
       }
     `}</style>
 

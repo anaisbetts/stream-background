@@ -1,5 +1,4 @@
 import * as React from 'react';
-
 import { db } from './firebase';
 
 import {
@@ -219,6 +218,18 @@ const TodoList: React.FunctionComponent = () => {
 // tslint:disable-next-line:variable-name
 const Content: React.FunctionComponent = () => {
   const theWidth = ('window' in global) ? window.outerWidth : 0;
+  const bottomLink = useDocument(() => db.doc('metadata/bottomLink'));
+
+  let bottomLinkMarkup = <></>;
+  if (bottomLink && bottomLink.exists) {
+    bottomLinkMarkup = <>
+      <span style={{ flex: "1 1 auto" }} />
+      <h2 style={{ paddingRight: 2 }}>What I am working on:</h2>
+      <h2 style={{ marginLeft: 32, paddingLeft: 8, paddingRight: 8 }}>{bottomLink.data()!.text}</h2>
+      <span style={{ marginRight: SIDEBAR_WIDTH }} />
+    </>
+  }
+
   return (
     <>
       {containerStylesheet}
@@ -252,6 +263,7 @@ const Content: React.FunctionComponent = () => {
           </div>
 
           <h2 style={{ marginLeft: 32 }}>@anaisbetts</h2>
+          {bottomLinkMarkup}
         </footer>
 
       </PageContainer>

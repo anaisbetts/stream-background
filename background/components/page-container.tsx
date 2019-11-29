@@ -41,7 +41,7 @@ const stylesheet = (<style jsx global>{`
   }
 
   .container {
-    font-family: Convection, Arial;
+    font-family: "Source Sans Pro", Arial;
     font-size: 1.35em;
   }
 
@@ -50,6 +50,7 @@ const stylesheet = (<style jsx global>{`
     margin-bottom: 2px;
     font-family: Pacifico;
     font-size: 1.5rem;
+    padding-right: 4px;
   }
 `}</style>);
 

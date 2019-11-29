@@ -25,7 +25,7 @@ const BoxWithHeader: React.FunctionComponent<{ title: string, gridId: string }> 
         margin-right: 16px;
         margin-top: 2px;
         margin-bottom: 2px;
-        font-family: Convection, Arial;
+        font-family: "Source Sans Pro", Arial;
         word-wrap: break-word;
 
         background-color: ${BACKGROUND_COLOR.darken(-0.2).alpha(0.5)};

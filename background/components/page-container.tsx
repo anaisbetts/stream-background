@@ -30,7 +30,7 @@ const stylesheet = (<style jsx global>{`
     }
   }
 
-  .container {
+  .backgroundImage {
     background: ${BACKGROUND_COLOR};
     background-image: url('/static/${randomElement(backgrounds)}');
     color: ${TEXT_ON_BACKGROUND_COLOR};
@@ -38,6 +38,9 @@ const stylesheet = (<style jsx global>{`
     background-position: 0px 0px;
     background-repeat: repeat-x repeat-y;
     animation: animatedBackground 120s linear infinite alternate;
+  }
+
+  .container {
     font-family: Convection, Arial;
     font-size: 1.35em;
   }
@@ -59,7 +62,7 @@ const PageContainer: React.FunctionComponent = ({ children }) => (
 
     {stylesheet}
 
-    <div className='container'>
+    <div className='container backgroundImage'>
       {children}
     </div>
   </>

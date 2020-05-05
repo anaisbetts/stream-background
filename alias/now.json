@@ -1,9 +1,6 @@
 {
   "version": 2,
   "name": "ab-alias-site",
-  "alias": [
-    "anais.dev"
-  ],
   "builds": [
     {
       "src": "src/index.ts",

@@ -23,6 +23,18 @@ export default async function (req: NowRequest, res: NowResponse) {
   const slug = qq.split('/')[0] || 'me';
   let target;
 
+  if (slug === 'dump-keys') {
+    const slugDocs = await db.collection('aliases').get();
+
+    res.status(200);
+    res.setHeader('Content-Type', 'text/plain');
+
+    res.send('Here it is:\n\n' + slugDocs.docs.reduce((acc, x) => {
+      acc += `${x.data().slug} => ${x.data().target}\n`;
+      return acc;
+    }, ''));
+  }
+
   if (cache.has(slug)) {
     target = cache.get(slug);
   }

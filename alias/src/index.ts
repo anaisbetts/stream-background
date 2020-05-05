@@ -7,7 +7,18 @@ const cache = new LRU<string, string>({ max: 2048, maxAge: 5 * 60 * 1000 });
 
 export default async function (req: NowRequest, res: NowResponse) {
   const q = req.query['slug'];
-  const qq = Array.isArray(q) ? q[0] : q;
+  let qq = Array.isArray(q) ? q[0] : q;
+
+  let hostSlug;
+  hostSlug = (req.headers['host'] || '')
+    .replace('anais.dev', '')
+    .replace(/:.*/i, '')
+    .replace(/\.$/, '');
+
+  if (hostSlug.length < 1) hostSlug = null;
+  if ((!qq || qq.length < 1) && hostSlug) {
+    qq = hostSlug;
+  }
 
   const slug = qq.split('/')[0] || 'me';
   let target;
@@ -21,7 +32,8 @@ export default async function (req: NowRequest, res: NowResponse) {
 
     if (slugDoc.docs.length < 1) {
       res.status(404);
-      res.send('dunno lol');
+      // res.send(`dunno lol. host-based slug is ${nqq}, ${JSON.stringify(req.headers, null, 2)} `);
+      res.send('dunno lol.');
       return;
     }
 

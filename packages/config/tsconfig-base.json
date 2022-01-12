@@ -11,17 +11,9 @@
     "noUnusedLocals": true,
     "noImplicitThis": true,
     "noUnusedParameters": true,
-    "esModuleInterop": true,
-    "module": "commonjs",
     "moduleResolution": "node",
-    "pretty": true,
-    "target": "es6",
-    "jsx": "react",
+    "pretty": true
   },
-  "lib": [
-    "dom",
-    "es2015"
-  ],
   "formatCodeOptions": {
     "indentSize": 2,
     "tabSize": 2

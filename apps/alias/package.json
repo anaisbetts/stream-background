@@ -19,6 +19,7 @@
     "typescript": "^4.5.4"
   },
   "devDependencies": {
+    "config": "*",
     "@now/node": "^1.5.1",
     "@types/lru-cache": "^5.1.1",
     "@types/micro": "^7.3.6",

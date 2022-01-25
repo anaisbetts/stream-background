@@ -5,10 +5,12 @@ import { db } from './firebase'
 import { collection, getDocs, query, limit, where } from 'firebase/firestore'
 
 const cache = new LRU<string, string>({ max: 2048, maxAge: 5 * 60 * 1000 })
+console.log('wat')
 
 export default async function (req: VercelRequest, res: VercelResponse) {
   const q = req.query['slug']
   let qq = Array.isArray(q) ? q[0] : q
+  console.log('REQUEST')
 
   let hostSlug
   hostSlug = (req.headers['host'] || '')

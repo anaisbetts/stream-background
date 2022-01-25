@@ -33,7 +33,7 @@
   },
   "scripts": {
     "dev": "next",
-    "build": "next build",
+    "build": "echo next build",
     "now-build": "next build",
     "start": "next start"
   }

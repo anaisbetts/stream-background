@@ -1,7 +1,7 @@
 import { initializeApp } from 'firebase/app'
 import { getFirestore } from 'firebase/firestore'
 
-import { firebaseConfig } from './firebase-config'
+import { firebaseConfig } from 'secrets/firebase-config'
 
 try {
   initializeApp(firebaseConfig)

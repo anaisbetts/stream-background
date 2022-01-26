@@ -1,5 +1,5 @@
 node_modules
-src/firebase-config.ts
-.now
-.vercel
+.now/
+.vercel/
+.turbo/
 tsconfig.tsbuildinfo

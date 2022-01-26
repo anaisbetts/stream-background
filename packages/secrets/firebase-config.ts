@@ -8,7 +8,7 @@ export const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID,
 };
 
-export const firebaseBotUser = process.env.FIREBASE_BOT_USER;
-export const firebaseBotPassword = process.env.FIREBASE_BOT_PASSWORD;
-export const defaultTwitchUsername = process.env.TWITCH_USERNAME;
+export const firebaseBotUser = process.env.FIREBASE_BOT_USER!;
+export const firebaseBotPassword = process.env.FIREBASE_BOT_PASSWORD!;
+export const defaultTwitchUsername = process.env.TWITCH_USERNAME!;
 export const defaultTwitchChannel = defaultTwitchUsername;

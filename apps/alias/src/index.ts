@@ -1,7 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node'
 
 import LRU from 'lru-cache'
-import { db } from './firebase'
+import { db } from 'secrets/firebase'
 import { collection, getDocs, query, limit, where } from 'firebase/firestore'
 
 const cache = new LRU<string, string>({ max: 2048, maxAge: 5 * 60 * 1000 })

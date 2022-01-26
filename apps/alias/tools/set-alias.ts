@@ -1,4 +1,4 @@
-import { db } from '../src/firebase'
+import { db } from 'secrets/firebase'
 import { doc, setDoc } from 'firebase/firestore'
 
 async function main() {

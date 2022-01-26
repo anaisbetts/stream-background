@@ -1,0 +1,36 @@
+{
+  "name": "stream-background",
+  "version": "0.0.1",
+  "author": "Anaïs Betts",
+  "license": "AGPL 3.0",
+  "dependencies": {
+    "array-move": "^4.0.0",
+    "color": "^4.2.0",
+    "firebase": "^9.6.4",
+    "next": "^12.0.8",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "rxjs": "^7.5.2",
+    "secrets": "*",
+    "typescript": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/array-move": "^2.0.0",
+    "@types/color": "^3.0.2",
+    "@types/react": "^17.0.38",
+    "@types/styled-jsx": "^2.2.9",
+    "autoprefixer": "^10.4.2",
+    "config": "*",
+    "eslint": "^8.7.0",
+    "eslint-config-next": "^12.0.8",
+    "postcss": "^8.4.5",
+    "prettier": "^2.5.1",
+    "tailwindcss": "^3.0.17"
+  },
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "now-build": "next build",
+    "start": "next start"
+  }
+}

@@ -9,16 +9,21 @@
         ".next/**"
       ]
     },
+    "deploy": {
+      "dependsOn": [
+        "build",
+        "test",
+        "lint"
+      ]
+    },
     "lint": {
       "outputs": []
     },
     "test": {
-      "outputs": [],
-      "cache": false
-    },
-    "watch": {
-      "outputs": [],
-      "cache": false
+      "dependsOn": [
+        "^test"
+      ],
+      "outputs": []
     },
     "dev": {
       "cache": false

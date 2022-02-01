@@ -5,7 +5,8 @@
 	"scripts": {
 		"build": "tsc",
 		"test": "jest",
-		"dev": "jest --watch"
+		"dev": "jest --watch",
+		"lint": "eslint ."
 	},
 	"dependencies": {
 		"config": "*",

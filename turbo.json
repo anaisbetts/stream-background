@@ -9,7 +9,20 @@
         ".next/**"
       ]
     },
+    "deploy": {
+      "dependsOn": [
+        "build",
+        "test",
+        "lint"
+      ]
+    },
     "lint": {
+      "outputs": []
+    },
+    "test": {
+      "dependsOn": [
+        "^test"
+      ],
       "outputs": []
     },
     "dev": {

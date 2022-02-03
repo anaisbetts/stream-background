@@ -32,6 +32,7 @@
     "dev": "next",
     "build": "next build",
     "now-build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "lint": "eslint ."
   }
 }

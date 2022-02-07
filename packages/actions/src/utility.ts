@@ -34,3 +34,16 @@ export function cx(...args: (string | null | undefined | false)[]) {
     }, [])
     .join(' ')
 }
+
+export function promiseFinally<T>(p: Promise<T>, block: () => unknown) {
+  return p.then(
+    (x) => {
+      block()
+      return Promise.resolve(x)
+    },
+    (e) => {
+      block()
+      return Promise.reject(e)
+    }
+  )
+}

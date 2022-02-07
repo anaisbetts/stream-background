@@ -8,7 +8,7 @@ export function useObservable<T>(
   block: () => Observable<T>,
   deps?: React.DependencyList
 ): Result<T> {
-  const [ret, setRet] = useState(Result.Pending<T>())
+  const [ret, setRet] = useState(Result.pending<T>())
   const mounted = useMounted()
 
   useEffect(() => {
@@ -23,13 +23,13 @@ export function useObservable<T>(
       d = block().subscribe({
         next: (x) => {
           set = true
-          if (mounted.current) setRet(Result.Ok(x))
+          if (mounted.current) setRet(Result.ok(x))
         },
         error: (e) => {
           set = true
           done = true
           if (mounted.current) {
-            setRet(Result.Err(e))
+            setRet(Result.err(e))
           }
         },
         complete: () => {
@@ -37,7 +37,7 @@ export function useObservable<T>(
           Promise.resolve().then(() => {
             if (ret.isPending() && !set) {
               setRet(
-                Result.Err(
+                Result.err(
                   new Error('Observable must have at least one element')
                 )
               )
@@ -46,7 +46,7 @@ export function useObservable<T>(
         },
       })
     } catch (e: any) {
-      setRet(Result.Err(e))
+      setRet(Result.err(e))
     }
 
     return () => d.unsubscribe()

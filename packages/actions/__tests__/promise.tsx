@@ -2,13 +2,7 @@ import React from 'react'
 import { Observable, Subject, firstValueFrom } from 'rxjs'
 import { useObservable, usePromise } from '../src/promise'
 
-import {
-  act,
-  cleanup,
-  getAllByTestId,
-  render,
-  screen,
-} from '@testing-library/react'
+import { act, cleanup, render, screen } from '@testing-library/react'
 
 function PromiseComponent(props: { p: Promise<number> }) {
   const box = usePromise(() => props.p, [props.p])
